@@ -65,12 +65,11 @@ public class UserController {
 
 
     @GetMapping(value = "/infoWithJwt")
-    public DecodedJWT infoWithJwt(String token){
+    public String infoWithJwt(String token){
         Algorithm algorithm = Algorithm.HMAC256(IMOOC);
         JWTVerifier verifier = JWT.require(algorithm)
-                .withIssuer("auth0")
                 .build();
         DecodedJWT decodedJWT = verifier.verify(token);
-        return decodedJWT;
+        return decodedJWT.getClaim("login_user").asString();
     }
 }
