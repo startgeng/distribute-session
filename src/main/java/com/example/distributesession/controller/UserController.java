@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpSession;
+import java.util.Date;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -59,17 +60,24 @@ public class UserController {
         Algorithm algorithm = Algorithm.HMAC256(IMOOC);
         String token = JWT.create()
                 .withClaim("login_user",username)
+                //3600毫秒
+                .withExpiresAt(new Date(System.currentTimeMillis()+ 3600000))
                 .sign(algorithm);
         return token;
     }
 
-
+    //jwt的信息可以被解析，但是不能篡改
     @GetMapping(value = "/infoWithJwt")
     public String infoWithJwt(String token){
         Algorithm algorithm = Algorithm.HMAC256(IMOOC);
         JWTVerifier verifier = JWT.require(algorithm)
                 .build();
-        DecodedJWT decodedJWT = verifier.verify(token);
-        return decodedJWT.getClaim("login_user").asString();
+        try {
+            DecodedJWT decodedJWT = verifier.verify(token);
+            return decodedJWT.getClaim("login_user").asString();
+        }catch (Exception e){
+            System.out.println("token过期");
+        }
+        return null;
     }
 }
