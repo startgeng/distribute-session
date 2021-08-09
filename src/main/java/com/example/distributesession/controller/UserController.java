@@ -63,6 +63,7 @@ public class UserController {
         return token;
     }
 
+
     @GetMapping(value = "/infoWithJwt")
     public DecodedJWT infoWithJwt(String token){
         Algorithm algorithm = Algorithm.HMAC256(IMOOC);
