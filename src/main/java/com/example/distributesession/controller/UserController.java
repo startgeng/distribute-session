@@ -7,6 +7,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpSession;
@@ -60,6 +61,7 @@ public class UserController {
         Algorithm algorithm = Algorithm.HMAC256(IMOOC);
         String token = JWT.create()
                 .withClaim("login_user",username)
+                .withClaim("id",1)
                 //3600毫秒
                 .withExpiresAt(new Date(System.currentTimeMillis()+ 3600000))
                 .sign(algorithm);
@@ -80,4 +82,11 @@ public class UserController {
         }
         return null;
     }
+
+    @GetMapping(value = "/address")
+    public String address(@RequestAttribute String id){
+        return id;
+    }
+
+
 }
